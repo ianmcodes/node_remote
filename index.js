@@ -1,22 +1,27 @@
 var mouse = require('node_mouse_mac');
 var httpServer = require('http').createServer(httpHandler);
 var url = require('url');
-var io = require('socket.io').listen(app);
+var io = require('socket.io').listen(httpServer);
 var fs = require('fs');
 
-app.listen(8888);
+httpServer.listen(8888);
 
 io.sockets.on('connection',function(socket) {
 	socket.on('mouseMove', function(data) {
-		mouse.show();
+		console.log(data);
 		mouse.moveDelta(data.dx, data.dy);
+		mouse.show();
 	});
 });
 
 function httpHandler(req, res) {
 	var parsedUrl = url.parse(req.url, true);
-	if(fs.existSync(__dirname + parsedUrl.pathname)) {
+	if(parsedUrl.pathname === '/') {
+		parsedUrl.pathname = '/index.html';
+	}
+	if(fs.existsSync(__dirname + parsedUrl.pathname)) {
 		// serve file
+	console.log(__dirname + parsedUrl.pathname);
 		fs.readFile(__dirname + parsedUrl.pathname, function(err, data) {
 			if(err) {
 				res.writeHead(500);

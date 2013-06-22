@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- disable pinch zoom -->
+		<meta name="viewport" content="width=device-width, inital-scale=1, maximum-scale=1, user-scalable=0" />
+		
+		<title>Remote mouse &amp; keyboard</title>
+		
+		<script type="text/javascript" src="jquery-2.0.2.js"></script>
+		<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+		
+		<script type="text/javascript">
+			jQuery(function($) {
+				window.scrollTo(0,0);
+				$('#mousepad').height($(window).height() - 10);
+				var socket = io.connect("//" + document.location.host);
+				
+				var lastLoc = {x:null,y:null};
+				$('#mousepad').on("touchstart",function(evt) {
+					evt.preventDefault();
+					lastLoc.x = evt.originalEvent.touches[0].clientX;
+					lastLoc.y = evt.originalEvent.touches[0].clientY;
+				});
+				
+				$('#mousepad').on("touchmove",function(evt) {
+					evt.preventDefault();
+					var dx = evt.originalEvent.touches[0].clientX - lastLoc.x;
+					var dy = evt.originalEvent.touches[0].clientY - lastLoc.y;
+					lastLoc.x = evt.originalEvent.touches[0].clientX;
+					lastLoc.y = evt.originalEvent.touches[0].clientY;
+					socket.emit('mouseMove',{'dx':dx,'dy':dy});
+				});
+			});
+		</script>
+		
+		<style>
+			#mousepad {
+				background-color: blue;
+				width: 100%;
+				height:100%;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="mousepad">
+			
+		</canvas>
+	</body>
+</html>
