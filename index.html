@@ -7,6 +7,7 @@
 		<title>Remote mouse &amp; keyboard</title>
 		
 		<script type="text/javascript" src="jquery-2.0.2.js"></script>
+		<script type="text/javascript" src="jquery.mobile-1.3.1.js"></script>
 		<script type="text/javascript" src="/socket.io/socket.io.js"></script>
 		
 		<script type="text/javascript">
@@ -15,6 +16,10 @@
 				$('#mousepad').height($(window).height() - 10);
 				var socket = io.connect("//" + document.location.host);
 				
+				////////////////////////////////////////
+				/*
+				 * mouse move
+				 */
 				var lastLoc = {x:null,y:null};
 				$('#mousepad').on("touchstart",function(evt) {
 					evt.preventDefault();
@@ -29,6 +34,15 @@
 					lastLoc.x = evt.originalEvent.touches[0].clientX;
 					lastLoc.y = evt.originalEvent.touches[0].clientY;
 					socket.emit('mouseMove',{'dx':dx,'dy':dy});
+				});
+				////////////////////////////////////////
+				
+				////////////////////////////////////////
+				/*
+				 * mouse click
+				 */
+				$('#mousepad').on("tap", function(evt) {
+					socket.emit('mouseClick');
 				});
 			});
 		</script>

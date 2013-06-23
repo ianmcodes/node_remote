@@ -8,9 +8,16 @@ httpServer.listen(8888);
 
 io.sockets.on('connection',function(socket) {
 	socket.on('mouseMove', function(data) {
-		console.log(data);
+		//console.log(data);
 		mouse.moveDelta(data.dx, data.dy);
 		mouse.show();
+	});
+	
+	socket.on('mouseClick', function(data) {
+		//console.log("CLICK!");
+		mouse.buttonDown();
+		setTimeout(mouse.buttonUp,50);
+		//mouse.buttonUp();
 	});
 });
 
