@@ -36,16 +36,21 @@
 						lastLoc.y = evt.originalEvent.touches[0].clientY;
 					});
 
+					var lastmove = new Date();
 					$('#mousepad').on("touchmove", function(evt) {
 						evt.preventDefault();
-						var dx = evt.originalEvent.touches[0].clientX - lastLoc.x;
-						var dy = evt.originalEvent.touches[0].clientY - lastLoc.y;
-						lastLoc.x = evt.originalEvent.touches[0].clientX;
-						lastLoc.y = evt.originalEvent.touches[0].clientY;
-						socket.emit('mouseMove', {
-							'dx' : dx,
-							'dy' : dy
-						});
+						var now = new Date();
+						if((now - lastmove) > 30) {
+							lastmove = now;
+							var dx = evt.originalEvent.touches[0].clientX - lastLoc.x;
+							var dy = evt.originalEvent.touches[0].clientY - lastLoc.y;
+							lastLoc.x = evt.originalEvent.touches[0].clientX;
+							lastLoc.y = evt.originalEvent.touches[0].clientY;
+							socket.emit('mouseMove', {
+								'dx' : dx,
+								'dy' : dy
+							});
+						}
 					});
 					////////////////////////////////////////
 
@@ -74,7 +79,7 @@
 						}
 					});
 					
-					$('#keyboard i').on("tap", function(evt) {
+					$('#keyboard i').on("click", function(evt) {
 						var el = evt.currentTarget;
 						var code = el.getAttribute('code');
 						if($(el).hasClass('char')) {
@@ -135,7 +140,8 @@
 
 			#keyboard i {
 				font-style: normal;
-				width: 10px;
+				font-size: 100px;
+				width: 8%;
 				display: inline-block;
 				border: 1px solid beige;
 			}

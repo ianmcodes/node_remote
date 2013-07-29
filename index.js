@@ -1,5 +1,5 @@
 var mouse = require('node_mouse_mac');
-//var keyboard = require('node_keyboard_mac');
+var keyboard = require('node_keyboard_mac');
 var httpServer = require('http').createServer(httpHandler);
 var url = require('url');
 var io = require('socket.io').listen(httpServer);
@@ -8,15 +8,23 @@ var fs = require('fs');
 
 httpServer.listen(8888);
 
+io.set('heartbeats', false);
+io.set('log level', 1);
+
 io.sockets.on('connection',function(socket) {
+	//var lastmove = new Date();
 	socket.on('mouseMove', function(data) {
-		//console.log(data);
-		mouse.moveDelta(data.dx, data.dy);
-		//mouse.show();
+		//var now = new Date();
+		console.log(data);
+		//if ((now - lastmove) > 1000) {
+			mouse.moveDelta(data.dx, data.dy);
+			mouse.show();
+			//lastmove = now;
+		//}
 	});
 	
 	socket.on('mouseClick', function(data) {
-		//console.log("CLICK!");
+		console.log("CLICK!");
 		mouse.buttonDown();
 		setTimeout(mouse.buttonUp,50);
 		//mouse.buttonUp();
@@ -29,8 +37,8 @@ io.sockets.on('connection',function(socket) {
 		var code = Math.round(data.keyCode);
 		if(isNaN(code))
 			return;
-		keyboard.keyDown(code);
-		setTimeout(keyboard.keyUp, 50, code);
+		//keyboard.keyDown(code);
+		//setTimeout(keyboard.keyUp, 50, code);
 	});
 });
 
@@ -41,7 +49,7 @@ function httpHandler(req, res) {
 	}
 	if(fs.existsSync(__dirname + parsedUrl.pathname)) {
 		// serve file
-	console.log(__dirname + parsedUrl.pathname);
+	//console.log(__dirname + parsedUrl.pathname);
 		fs.readFile(__dirname + parsedUrl.pathname, function(err, data) {
 			if(err) {
 				res.writeHead(500);
